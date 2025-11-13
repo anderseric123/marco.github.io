@@ -100,7 +100,7 @@
             border-radius: 20px;
             font-weight: 500;
             background: rgba(220, 38, 38, 0.08);
-            color: #dc2626;
+            color: #86efac;
         }
 
         .price-value {
@@ -112,7 +112,7 @@
 
         .price-change {
             font-size: 1em;
-            color: #64748b;
+            color: #334155;
         }
 
         .section {
@@ -356,34 +356,35 @@
         }
     </style>
 <base target="_blank">
+<base target="_blank">
 </head>
 <body>
     <div class="container">
         <!-- 页面标题 -->
         <div class="header fade-in">
-            <h1>欧佩克月报深度解析</h1>
+            <h1>欧佩克月报深度梳理</h1>
             <p class="subtitle">2025年11月 | 供应过剩格局下的市场新动态</p>
         </div>
 
         <!-- 市场即时反应 -->
         <div class="section fade-in">
-            <h2 class="section-title">市场即时反应</h2>
+            <h2 class="section-title">市场反应（11月13日11:00）</h2>
             <div class="market-impact">
                 <div class="oil-price-card">
                     <div class="price-header">
                         <span class="price-title">WTI 原油期货</span>
-                        <span class="price-trend">↓ 1.29%</span>
+                        <span class="price-trend">↓ 0.16%</span>
                     </div>
-                    <div class="price-value" id="wti-price">$59.12/桶</div>
+                    <div class="price-value" id="wti-price">$58.36/桶</div>
                     <div class="price-change">结束三日连涨势头</div>
                 </div>
                 <div class="oil-price-card">
                     <div class="price-header">
                         <span class="price-title">布伦特原油</span>
-                        <span class="price-trend">↓ 1.38%</span>
+                        <span class="price-trend">↓ 0.01%</span>
                     </div>
-                    <div class="price-value" id="brent-price">$63.19/桶</div>
-                    <div class="price-change">失守64美元/桶关口</div>
+                    <div class="price-value" id="brent-price">$62.45/桶</div>
+                    <div class="price-change">失守63美元/桶关口</div>
                 </div>
             </div>
         </div>
@@ -490,30 +491,22 @@
 
         <!-- 后市展望 -->
         <div class="section fade-in">
-            <h2 class="section-title">后市展望</h2>
-            <div class="key-points-grid">
                 <div class="key-point-card">
-                    <div class="key-point-title">短期走势</div>
+                    <div class="key-point-title">国泰君安期货</div>
                     <div class="key-point-desc">
-                        在供应过剩担忧下，油价上涨空间受限。WTI原油结束三日连涨，市场情绪趋于谨慎。
+                        暴跌后波动或继续放大，逐步考验前低。核心逻辑：①俄油制裁虽短期提振，但中国地炼成最终承接者，主营消耗原料库存，地缘利多待观察；②委内地缘问题情绪溢价高，随时可能回吐。
                     </div>
                 </div>
                 <div class="key-point-card">
-                    <div class="key-point-title">中期风险</div>
+                    <div class="key-point-title">山金期货</div>
                     <div class="key-point-desc">
-                        2026年市场将面临更显著的供应过剩，欧佩克数据显示将出现盈余，尽管规模比其他预测机构更为温和。
+                        长期供应压力仍在，油价重心向下。重点关注：①全球原油浮仓和亚太俄油采购；②乌克兰打击范围扩大至管道和海上终端，俄海运出货量连降三周至两月低点，短期冲突难缓解。
                     </div>
                 </div>
                 <div class="key-point-card">
-                    <div class="key-point-title">需求端</div>
+                    <div class="key-point-title">新湖期货</div>
                     <div class="key-point-desc">
-                        2025年全球经济增长预期维持在3%，需求增速预测保持不变，但主要消费国进口变化分化。
-                    </div>
-                </div>
-                <div class="key-point-card">
-                    <div class="key-point-title">政策影响</div>
-                    <div class="key-point-desc">
-                        沙特引导增产以夺回市场份额，但联盟成员首次表现出放缓迹象，政策转向可能性增加。
+                        短期维持区间偏弱震荡。地缘：俄乌准备恢复伊斯坦布尔会谈；宏观：美联储票委对12月降息不积极。建议密切关注宏观地缘消息扰动。
                     </div>
                 </div>
             </div>
@@ -530,8 +523,8 @@
         // 初始化页面数据
         document.addEventListener('DOMContentLoaded', function() {
             // 设置初始油价数据
-            document.getElementById('wti-price').textContent = '$59.12/桶';
-            document.getElementById('brent-price').textContent = '$63.19/桶';
+            document.getElementById('wti-price').textContent = '$58.33/桶';
+            document.getElementById('brent-price').textContent = '$62.43/桶';
             
             // 生成国家产量卡片
             generateCountryCards();
@@ -716,7 +709,7 @@
                     }
                 },
                 legend: {
-                    data: ['2024', '2025', '2026'],
+                    data: ['2025', '2026'],
                     top: 40,
                     textStyle: {
                         color: '#64748b'
@@ -759,26 +752,9 @@
                 },
                 series: [
                     {
-                        name: '2024',
-                        type: 'line',
-                        data: [10320, 10450, 10580, 10620],
-                        itemStyle: {
-                            color: '#0ea5e9'
-                        },
-                        lineStyle: {
-                            width: 3
-                        },
-                        areaStyle: {
-                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                                { offset: 0, color: 'rgba(14, 165, 233, 0.2)' },
-                                { offset: 1, color: 'rgba(14, 165, 233, 0.03)' }
-                            ])
-                        }
-                    },
-                    {
                         name: '2025',
                         type: 'line',
-                        data: [10450, 10580, 10710, 10750],
+                        data: [10426, 10421, 10549, 10657],
                         itemStyle: {
                             color: '#0284c7'
                         },
@@ -795,7 +771,7 @@
                     {
                         name: '2026',
                         type: 'line',
-                        data: [10580, 10710, 10840, 10880],
+                        data: [10555, 10557, 10705, 10787],
                         itemStyle: {
                             color: '#22d3ee'
                         },
