@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>集运欧线涨停·金十期货专题</title>
+    <style>
+        :root {
+            --primary: #e63946;
+            --secondary: #1d3557;
+            --accent: #f1faee;
+            --text: #2b2d42;
+            --bg: #f8f9fa;
+            --card-bg: #ffffff;
+            --border: #e9ecef;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Source Han Sans', 'Noto Sans CJK SC', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding-bottom: 110px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header Section */
+        header {
+            position: relative;
+            overflow: hidden;
+            background-image:
+                linear-gradient(135deg, rgba(29, 53, 87, 0.88), rgba(29, 53, 87, 0.62)),
+                url('https://img.jin10.com/news/26/03/xI3OtFbuozZj0Bsr1U6p4.jpg/lite');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-blend-mode: multiply;
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            border-radius: 0 0 20px 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        header::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(29,53,87,0.35) 45%, rgba(29,53,87,0.72) 100%);
+            pointer-events: none;
+        }
+
+        header > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            letter-spacing: -0.5px;
+        }
+
+        .badge {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        /* Countdown Timer */
+        .timer-container {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 10px;
+            display: inline-flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .timer-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        #countdown {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #ffd166;
+        }
+
+        /* Section Styling */
+        section {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border: 1px solid var(--border);
+        }
+
+        section h2 {
+            font-size: 1.5rem;
+            color: var(--secondary);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary);
+            display: inline-block;
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--border);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 25px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -34px;
+            top: 5px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: 2px solid white;
+        }
+
+        .date {
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .timeline-content {
+            font-size: 0.95rem;
+        }
+
+        .risk-tip {
+            background: #fff3f3;
+            border-left: 4px solid var(--primary);
+            padding: 10px 15px;
+            margin-top: 10px;
+            font-size: 0.85rem;
+            color: #c0392b;
+        }
+
+        /* Factors Grid */
+        .factors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .factor-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .factor-card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            color: var(--secondary);
+        }
+
+        /* Shipping Companies */
+        .company-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .company-item {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .company-header {
+            background: #f1f3f5;
+            padding: 12px 20px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .company-body {
+            padding: 15px 20px;
+            font-size: 0.9rem;
+        }
+
+        .company-body ul {
+            padding-left: 20px;
+        }
+
+        .fee-tag {
+            background: #e9ecef;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        /* Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 0.9rem;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: #f8f9fa;
+            color: var(--secondary);
+        }
+
+        /* Articles Grid */
+        .articles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .article-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            transition: transform 0.2s;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .article-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .article-img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+        }
+
+        .article-info {
+            padding: 12px;
+        }
+
+        .article-title {
+            font-size: 0.85rem;
+            font-weight: bold;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .article-tag {
+            display: inline-block;
+            font-size: 0.68rem;
+            font-weight: 700;
+            color: #c92a2a;
+            background: #fff1f1;
+            border: 1px solid #ffd6d6;
+            padding: 2px 8px;
+            border-radius: 999px;
+            margin-bottom: 8px;
+            letter-spacing: 0.2px;
+        }
+
+        .article-card.is-collapsed {
+            display: none;
+        }
+
+        .articles-toggle-wrap {
+            margin-top: 18px;
+            text-align: center;
+        }
+
+        .articles-toggle-btn {
+            border: 1px solid var(--border);
+            background: #ffffff;
+            color: var(--secondary);
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 999px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .articles-toggle-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* Footer */
+        .page-footer {
+            text-align: center;
+            font-size: 0.8rem;
+            color: #6c757d;
+            margin-top: 40px;
+        }
+
+        /* Fixed Bottom Actions */
+        .fixed-actions {
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 40;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            border-top: 1px solid var(--border);
+            box-shadow: 0 -5px 20px -5px rgba(0, 0, 0, 0.1);
+            padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
+        }
+
+        .fixed-actions-inner {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .action-btn {
+            height: 44px;
+            border-radius: 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 0.92rem;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            flex: 1;
+        }
+
+        .action-btn:active {
+            transform: scale(0.98);
+        }
+
+        .action-btn.full-width {
+            width: 100%;
+            flex: 0 0 100%;
+        }
+
+        .share-btn {
+            border: 1px solid #b68c2e;
+            color: #d4a948;
+            background: #1a1f2e;
+            display: none;
+        }
+
+        .share-btn:hover {
+            background: #22293d;
+            border-color: #d4a948;
+        }
+
+        .download-btn {
+            color: #241c09;
+            background: linear-gradient(90deg, #c7972e 0%, #f4d37e 50%, #c7972e 100%);
+            box-shadow: 0 8px 20px rgba(199, 151, 46, 0.28);
+            line-height: 1.1;
+            flex-direction: column;
+        }
+
+        .download-btn span:last-child {
+            font-size: 0.66rem;
+            font-weight: 500;
+            opacity: 0.8;
+            transform: scale(0.95);
+        }
+
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.5rem; }
+            section { padding: 20px; }
+            .factors-grid { grid-template-columns: 1fr; }
+            .fixed-actions { padding: 10px 12px calc(10px + env(safe-area-inset-bottom)); }
+            .fixed-actions-inner { gap: 10px; }
+            .action-btn { font-size: 0.86rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="badge">金十期货独家策划</div>
+        <h1>集运欧线连续三日触及涨停</h1>
+        <p>地缘政治“黑天鹅”突袭，全球航运版图正在重构</p>
+    </header>
+
+    <div class="container">
+        <!-- 一、事件时间线 -->
+        <section id="timeline">
+            <h2>一、事件时间线与价格表现</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <span class="date">📅 3月2日（周一）</span>
+                    <div class="timeline-content">
+                        <p>国内期货市场开盘即见 <strong>集运欧线期货主力合约触及涨停</strong>，涨幅约 15%。主要受中东局势突发冲击，霍尔木兹海峡通行风险骤升所致。</p>
+                        <p>同日，原油、燃油等能源类期货也出现大幅上涨甚至涨停。</p>
+                        <div class="risk-tip">风险提示：上期所、郑商所、大商所同时发布市场风险提示函，提醒投资者注意波动与风险。</div>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <span class="date">📅 3月3日（周二）</span>
+                    <div class="timeline-content">
+                        <p>集运欧线期货连续第二日涨停，涨幅18%，主力合约报1644.8点。</p>
+                        <p>原油、燃料油等依旧涨停或高位运行；商品市场整体波动加剧。港股市场中航运相关概念股（如中远海发）出现大幅上涨。</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <span class="date">📅 3月4日（周三）</span>
+                    <div class="timeline-content">
+                        <p>集运欧线期货再度触及涨停，涨幅20%，延续前两日强劲上涨势头。截至11:30涨幅回落至15.38%。</p>
+                        <p>能源、化工类期货多数上涨，行情热度不减。</p>
+                    </div>
+                </div>
+            </div>
+            <img src="https://flash-scdn.jin10.com/6e6c3e54-f00c-44c3-a9b8-2b206ffb2af2.png" alt="价格表现" style="max-width: 100%; margin-top: 20px; border-radius: 8px; display: block;">
+        </section>
+
+        <!-- 二、核心驱动因素 -->
+        <section id="factors">
+            <h2>二、核心驱动因素解析</h2>
+            <div class="factors-grid">
+                <div class="factor-card">
+                    <h3>1. 地缘政治冲击是首要触发器</h3>
+                    <p style="font-size: 0.9rem;">据路透，美伊冲突升级导致霍尔木兹海峡通行中断。作为全球油气运输重要“咽喉要道”，该区域的停摆直接推升国际油价及航运价格（含集运费率）。</p>
+                </div>
+                <div class="factor-card">
+                    <h3>2. 航运公司避险调整策略</h3>
+                    <p style="font-size: 0.9rem;">据Reddit有关消息，险种承保范围收缩、战争风险费上调等措施正在全球海运市场持续推出，使得航运成本显著上升，推高期货市场对未来运价的预期。</p>
+                </div>
+                <div class="factor-card">
+                    <h3>3. 多市场联动提升上涨动力</h3>
+                    <p style="font-size: 0.9rem;">市场分析人士认为，除集运欧线外，原油、燃油等能源类市场同时大幅走高，形成合力推升整体商品价格体系，增强市场情绪与风险偏好。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 三、各大航司应对措施 -->
+        <section id="companies">
+            <h2>三、各大航司及市场主体应对措施</h2>
+            <div class="company-list">
+                <div class="company-item">
+                    <div class="company-header">地中海航运 (MSC) <span class="fee-tag">附加费: $800</span></div>
+                    <div class="company-body">
+                        <ul>
+                            <li>暂停所有前往中东地区的货物订舱。</li>
+                            <li>指导在波斯湾区域船舶前往安全港避险。</li>
+                            <li>原定中东/红海航行改为绕行好望角。</li>
+                            <li>对每个集装箱征收约$800战争风险附加费。</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="company-item">
+                    <div class="company-header">马士基 (Maersk) <span class="fee-tag">状态: 停航/改道</span></div>
+                    <div class="company-body">
+                        <ul>
+                            <li>停止红海、霍尔木兹海峡以及受影响高风险海域的航行。</li>
+                            <li>船期改道好望角，暂缓苏伊士运河穿越方案。</li>
+                            <li>保留现有及拟议的TDS、ECS等附加费措施。</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="company-item">
+                    <div class="company-header">达飞海运 (CMA CGM) <span class="fee-tag">附加费: $2000-$4000</span></div>
+                    <div class="company-body">
+                        <ul>
+                            <li>对20尺干箱收取约 $2,000，40尺干箱约 $3,000。</li>
+                            <li>冷藏与特殊设备箱约 $4,000。</li>
+                            <li>暂停霍尔木兹海峡及中东高风险区域常规航线。</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="company-item">
+                    <div class="company-header">赫伯罗特 (Hapag-Lloyd) <span class="fee-tag">附加费: $1500-$3500</span></div>
+                    <div class="company-body">
+                        <ul>
+                            <li>20尺集装箱约 $1,500，冷藏/特殊箱约 $3,500。</li>
+                            <li>所有原计划通过霍尔木兹海峡的航行推迟。</li>
+                            <li>最小化对该区域的所有风险暴露。</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="company-item">
+                    <div class="company-header">中远海运 (COSCO) <span class="fee-tag">状态: 暂停订舱</span></div>
+                    <div class="company-body">
+                        <ul>
+                            <li>暂停霍尔木兹海峡等高风险水域航行。</li>
+                            <li>航线重定向至好望角绕行方式。</li>
+                            <li>同步调整报价结构并视风险情况引入战争风险附加费。</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>措施类别</th>
+                        <th>行动方向</th>
+                        <th>市场影响</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>航线停航 / 绕行</td>
+                        <td>暂停霍尔木兹海峡及红海段航行</td>
+                        <td>航程延长 & 成本上升</td>
+                    </tr>
+                    <tr>
+                        <td>战争风险附加费</td>
+                        <td>CMA CGM、Hapag-Lloyd 等</td>
+                        <td>货主成本显著提升</td>
+                    </tr>
+                    <tr>
+                        <td>订舱暂停</td>
+                        <td>MSC、ONE、PIL 等</td>
+                        <td>现货舱位紧张，价格进一步抬升</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- 四、霍尔木兹海峡有多重要？ -->
+        <section id="strait">
+            <h2>四、霍尔木兹海峡有多重要？</h2>
+            <p style="margin-bottom: 15px; font-size: 0.95rem;">霍尔木兹海峡连接波斯湾和阿曼湾，是全球最重要的石油海上通道。一旦该航道发生阻塞，将对全球能源供应链和航运成本产生颠覆性影响。</p>
+            <img src="https://flash-scdn.jin10.com/5d0a3e8c-5715-4067-b51c-9540e18dd363.png" alt="霍尔木兹海峡有多重要" style="max-width: 100%; border-radius: 8px; display: block;">
+        </section>
+
+        <!-- 五、后续关注点 -->
+        <section id="focus">
+            <h2>五、后续关注点</h2>
+            <ul style="padding-left: 20px; font-size: 0.95rem;">
+                <li>美伊冲突是否继续升级或外溢；</li>
+                <li>霍尔木兹海峡通行效率与保险评级变化；</li>
+                <li>国际能源市场波动对航运市场的二次传导；</li>
+                <li>SCFI欧洲航线指数变化；</li>
+                <li>主要班轮公司公布的即期运价（FAK报价）；</li>
+                <li>战争附加费（War Risk Surcharge）实际征收情况；</li>
+                <li>头部航运公司是否调整欧线挂靠港口顺序、增加绕行好望角比例。</li>
+            </ul>
+        </section>
+
+        <!-- 六、相关热点文章 -->
+        <section id="articles">
+            <h2>六、欧线热点资讯</h2>
+            <div class="articles-grid">
+                <a href="https://qihuo.jin10.com/flashDetail.html?id=20260304104104837800" class="article-card" target="_blank">
+                    <img src="https://gimg.jin10.com/gallary/25/07/5c89lXwoFTDnjmttYbA5w.png" alt="Article" class="article-img" referrerPolicy="no-referrer">
+                    <div class="article-info">
+                        <div class="article-tag">期货快讯PRO</div>
+                        <div class="article-title">航运市场大观测：矿运回暖提振干散货需求</div>
+                        <div style="font-size: 0.75rem; color: #6c757d; margin-top: 6px;">2026-03-04 10:41</div>
+                    </div>
+                </a>
+                <a href="https://qihuo.jin10.com/flashDetail.html?id=20260304100651016800" class="article-card" target="_blank">
+                    <img src="https://gimg.jin10.com/gallary/25/07/VXfrTMYaJV23qflv3ZZzn.png" alt="Article" class="article-img" referrerPolicy="no-referrer">
+                    <div class="article-info">
+                        <div class="article-tag">期货快讯PRO</div>
+                        <div class="article-title">集运欧线高位回落，市场出现新变量？</div>
+                        <div style="font-size: 0.75rem; color: #6c757d; margin-top: 6px;">2026-03-04 10:06</div>
+                    </div>
+                </a>
+                <a href="https://qihuo.jin10.com/articleDetail.html?id=1111492" class="article-card" target="_blank">
+                    <img src="https://gimg.jin10.com/news/25/01/XsSp0MKdZDhHkyFh0PElf.png" alt="Article" class="article-img" referrerPolicy="no-referrer">
+                    <div class="article-info">
+                        <div class="article-tag">深度解读</div>
+                        <div class="article-title">集运期价波动剧烈，连续三日触及涨停，地缘“黑天鹅”将如何重构全球航运版图？</div>
+                        <div style="font-size: 0.75rem; color: #6c757d; margin-top: 6px;">2026-03-04 09:33</div>
+                    </div>
+                </a>
+                <a href="https://mp.weixin.qq.com/s/xM_wjAioAWZW3RDEELxxbA" class="article-card" target="_blank">
+                    <img src="https://gimg.jin10.com/news/25/07/Cyw27J6j7t5DmCU0VPtMF.png" alt="Article" class="article-img" referrerPolicy="no-referrer">
+                    <div class="article-info">
+                        <div class="article-tag">运力观察</div>
+                        <div class="article-title">地缘再升温，欧线运力释放再延后</div>
+                        <div style="font-size: 0.75rem; color: #6c757d; margin-top: 6px;">2026-03-04 8:44</div>
+                    </div>
+                </a>
+                <a href="https://mp.weixin.qq.com/s/olhySj_NX7AVBSMX32GZlw" class="article-card" target="_blank">
+                    <img src="https://gimg.jin10.com/gallary/25/02/oIONTP5WCH5NetKr2hgpN.png" alt="Article" class="article-img" referrerPolicy="no-referrer">
+                    <div class="article-info">
+                        <div class="article-tag">情绪追踪</div>
+                        <div class="article-title">集运欧线: 航运风险外溢，市场看涨情绪强烈</div>
+                        <div style="font-size: 0.75rem; color: #6c757d; margin-top: 6px;">2026-03-03 16:33</div>
+                    </div>
+                </a>
+                <a href="https://mp.weixin.qq.com/s/f3pCKXsI97xzaUQN0FSFNQ" class="article-card" target="_blank">
+                    <img src="https://gimg.jin10.com/news/25/01/iFg0ZX0KkdCRxGbWtzgNG.png" alt="Article" class="article-img" referrerPolicy="no-referrer">
+                    <div class="article-info">
+                        <div class="article-tag">行情速评</div>
+                        <div class="article-title">地缘扰动叠加需求回暖共振，集运欧线指数涨停</div>
+                        <div style="font-size: 0.75rem; color: #6c757d; margin-top: 6px;">2026-03-03 14:53</div>
+                    </div>
+                </a>
+                <a href="https://qihuo.jin10.com/articleDetail.html?id=211871" class="article-card" target="_blank">
+                    <img src="https://gimg.jin10.com/gallary/25/07/C78Z6K3eI8xcjseLp0sld.png" alt="Article" class="article-img" referrerPolicy="no-referrer">
+                    <div class="article-info">
+                        <div class="article-tag">油运追踪</div>
+                        <div class="article-title">霍尔木兹静悄悄：超级油轮扎堆避险，被困波斯湾！</div>
+                        <div style="font-size: 0.75rem; color: #6c757d; margin-top: 6px;">2026-03-03 14:06</div>
+                    </div>
+                </a>
+                <a href="https://qihuo.jin10.com/articleDetail.html?id=211859" class="article-card" target="_blank">
+                    <img src="https://gimg.jin10.com/gallary/25/11/6BAO9TVf5_Ye810l3WjXH.png" alt="Article" class="article-img" referrerPolicy="no-referrer">
+                    <div class="article-info">
+                        <div class="article-tag">宏观预警</div>
+                        <div class="article-title">若霍尔木兹海峡长期关停，全球经济或迎来“确定性衰退”！</div>
+                        <div style="font-size: 0.75rem; color: #6c757d; margin-top: 6px;">2026-03-03 12:00</div>
+                    </div>
+                </a>
+                <a href="https://mp.weixin.qq.com/s/OX5SqFzeQ1khIHq_n2m9Fw" class="article-card" target="_blank">
+                    <img src="https://gimg.jin10.com/news/25/01/8V0LXIec14-yBblBAUvuD.png" alt="Article" class="article-img" referrerPolicy="no-referrer">
+                    <div class="article-info">
+                        <div class="article-tag">船司动态</div>
+                        <div class="article-title">美伊地缘冲突再起，船司继续挺价</div>
+                        <div style="font-size: 0.75rem; color: #6c757d; margin-top: 6px;">2026-03-02 8:00</div>
+                    </div>
+                </a>
+            </div>
+            <div class="articles-toggle-wrap">
+                <button type="button" id="articles-toggle-btn" class="articles-toggle-btn" aria-expanded="false">展开更多资讯</button>
+            </div>
+        </section>
+    </div>
+
+    <footer class="page-footer">
+        <p style="margin-bottom: 10px;">资料来源：以上内容来自路透等市场公开资料。</p>
+        <p style="max-width: 900px; margin: 0 auto 10px; line-height: 1.8;">免责声明：本专题所载信息、数据、观点及推演仅用于市场信息分享，不构成任何证券、期货、衍生品或其他金融产品的投资建议、承诺或收益保证，亦不构成法律、税务或财务建议。相关内容可能因市场变化、信息时效或来源差异而调整，平台不对其完整性、准确性、及时性作任何明示或暗示保证；任何机构或个人据此进行交易或决策所产生的直接或间接损失，均应自行承担。</p>
+        <p>© 2026 金十期货独家策划</p>
+    </footer>
+
+    <div class="fixed-actions">
+        <div class="fixed-actions-inner">
+            <button id="share-btn" type="button" onclick="handleSharePage()" class="action-btn share-btn" aria-label="分享专题">
+                <span>🔗</span>
+                <span>分享专题</span>
+            </button>
+            <a id="download-btn" href="https://qihuo.jin10.com/app/index.html" target="_blank" class="action-btn download-btn">
+                <span>下载金十期货APP</span>
+                <span>获取完整欧线资讯</span>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // 倒计时逻辑
+        function startCountdown() {
+            const countdownElement = document.getElementById('countdown');
+            
+            // 设置一个模拟的下次更新时间（比如每小时的整点）
+            function updateTimer() {
+                const now = new Date();
+                const nextHour = new Date();
+                nextHour.setHours(now.getHours() + 1, 0, 0, 0);
+                
+                const diff = nextHour - now;
+                
+                const h = Math.floor(diff / (1000 * 60 * 60));
+                const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const s = Math.floor((diff % (1000 * 60)) / 1000);
+                
+                if (countdownElement) {
+                    countdownElement.innerText = 
+                        String(h).padStart(2, '0') + ":" + 
+                        String(m).padStart(2, '0') + ":" + 
+                        String(s).padStart(2, '0');
+                }
+            }
+            
+            setInterval(updateTimer, 1000);
+            updateTimer();
+        }
+
+        function setupArticlesToggle() {
+            const articlesSection = document.getElementById('articles');
+            const toggleBtn = document.getElementById('articles-toggle-btn');
+            const toggleWrap = articlesSection ? articlesSection.querySelector('.articles-toggle-wrap') : null;
+            if (!articlesSection || !toggleBtn || !toggleWrap) return;
+
+            const cards = Array.from(articlesSection.querySelectorAll('.article-card'));
+            if (cards.length <= 3) {
+                toggleWrap.style.display = 'none';
+                return;
+            }
+
+            const extraCards = cards.slice(3);
+            let expanded = false;
+
+            function renderCards() {
+                extraCards.forEach(card => card.classList.toggle('is-collapsed', !expanded));
+                toggleBtn.textContent = expanded ? '收起资讯' : '展开更多资讯';
+                toggleBtn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+            }
+
+            toggleBtn.addEventListener('click', function () {
+                expanded = !expanded;
+                renderCards();
+            });
+
+            renderCards();
+        }
+
+        function handleSharePage() {
+            if (typeof window.Jin10JSBridge === 'undefined') return;
+            try {
+                const bridge = new window.Jin10JSBridge();
+                if (bridge && bridge.isApp) {
+                    bridge.dispatch('appShare', { url: location.href });
+                }
+            } catch (e) {
+                // Ignore bridge errors
+            }
+        }
+
+        function initAppEnvironment() {
+            const downloadBtn = document.getElementById('download-btn');
+            const shareBtn = document.getElementById('share-btn');
+            if (!downloadBtn || !shareBtn) return;
+
+            shareBtn.style.display = 'none';
+            shareBtn.classList.remove('full-width');
+            downloadBtn.style.display = '';
+            downloadBtn.classList.add('full-width');
+
+            if (typeof window.Jin10JSBridge === 'undefined') return;
+            try {
+                const bridge = new window.Jin10JSBridge();
+                if (bridge && bridge.isApp) {
+                    shareBtn.style.display = 'inline-flex';
+                    shareBtn.classList.add('full-width');
+                    downloadBtn.style.display = 'none';
+                    downloadBtn.classList.remove('full-width');
+                }
+            } catch (e) {
+                // Ignore bridge errors and keep browser fallback
+            }
+        }
+
+        function handleArticleLink(event) {
+            if (typeof window.Jin10JSBridge === 'undefined') return;
+            let bridge = null;
+            try {
+                bridge = new window.Jin10JSBridge();
+            } catch (e) {
+                return;
+            }
+
+            if (!bridge || !bridge.isApp) return;
+
+            event.preventDefault();
+            const url = event.currentTarget.href;
+            try {
+                bridge.dispatch('openAppWebViewWithNav', { url: url });
+            } catch (e) {
+                window.location.href = url;
+            }
+        }
+
+        function bindExternalLinks() {
+            const externalLinks = document.querySelectorAll('a[href^="http"]');
+            externalLinks.forEach(function (link) {
+                if (link.id === 'download-btn') return;
+                link.addEventListener('click', handleArticleLink);
+            });
+        }
+
+        window.onload = function () {
+            startCountdown();
+            setupArticlesToggle();
+            initAppEnvironment();
+            bindExternalLinks();
+        };
+    </script>
+</body>
+</html>
