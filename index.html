@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>美国农业部月报：全球核心农产品供需状态专题</title>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+  <script src="./usda-psd-topic-data.js"></script>
+  <style>
+    :root {
+      --bg: #f4f1e8;
+      --card: #ffffff;
+      --ink: #1f2a2e;
+      --muted: #66767c;
+      --line: #d8d2c5;
+      --accent: #1f6f5f;
+      --accent-2: #be5f2a;
+      --surplus: #1f8f58;
+      --balanced: #c58a00;
+      --deficit: #cb3c2d;
+      --unknown: #7e8792;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 0% 0%, #efe7d4 0%, transparent 32%),
+        radial-gradient(circle at 100% 100%, #e7f0e7 0%, transparent 28%),
+        var(--bg);
+      color: var(--ink);
+      font-family: "Avenir Next", "PingFang SC", "Noto Sans SC", "Helvetica Neue", sans-serif;
+      line-height: 1.45;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px 16px 40px;
+    }
+
+    .header {
+      padding: 16px 18px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: linear-gradient(135deg, #ffffff, #f5f9f8);
+      box-shadow: 0 10px 26px rgba(31, 42, 46, 0.06);
+    }
+
+    .title {
+      margin: 0;
+      font-size: 28px;
+      letter-spacing: 0.2px;
+    }
+
+    .subtitle {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .toolbar {
+      margin-top: 14px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .view-switch {
+      display: flex;
+      gap: 8px;
+    }
+
+    .view-btn {
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .view-btn.active {
+      background: var(--ink);
+      color: #fff;
+      border-color: var(--ink);
+    }
+
+    .commodity-grid {
+      margin-top: 14px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(152px, 1fr));
+      gap: 10px;
+    }
+
+    .commodity-card {
+      border: 1px solid var(--line);
+      background: var(--card);
+      border-radius: 12px;
+      padding: 10px;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .commodity-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(31, 42, 46, 0.08);
+    }
+
+    .commodity-card.active {
+      border-color: var(--accent);
+      box-shadow: 0 8px 18px rgba(31, 111, 95, 0.18);
+    }
+
+    .commodity-name {
+      margin: 0;
+      font-size: 17px;
+      font-weight: 700;
+    }
+
+    .status-pill {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 999px;
+      color: #fff;
+    }
+
+    .status-surplus { background: var(--surplus); }
+    .status-balanced { background: var(--balanced); }
+    .status-deficit { background: var(--deficit); }
+    .status-unknown { background: var(--unknown); }
+
+    .card-note {
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .view-panel {
+      margin-top: 14px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--card);
+      box-shadow: 0 10px 26px rgba(31, 42, 46, 0.06);
+      padding: 14px;
+    }
+
+    .view-panel[hidden] {
+      display: none;
+    }
+
+    .section-title {
+      margin: 0;
+      font-size: 19px;
+    }
+
+    .section-desc {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .kpi-grid {
+      margin-top: 12px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(165px, 1fr));
+      gap: 10px;
+    }
+
+    .kpi {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px;
+      background: #fff;
+    }
+
+    .kpi-label {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .kpi-value {
+      margin-top: 5px;
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    .chart {
+      margin-top: 12px;
+      width: 100%;
+      height: 360px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+    }
+
+    .table-wrap {
+      margin-top: 12px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      overflow: auto;
+      background: #fff;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 780px;
+    }
+
+    th, td {
+      border-bottom: 1px solid #ece8df;
+      padding: 8px 10px;
+      font-size: 13px;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    th:first-child,
+    td:first-child,
+    th:nth-child(2),
+    td:nth-child(2) {
+      text-align: left;
+    }
+
+    #globalPanel th:nth-child(3),
+    #globalPanel td:nth-child(3) {
+      text-align: left;
+    }
+
+    thead th {
+      position: sticky;
+      top: 0;
+      background: #f7f5f0;
+      color: #3a4a50;
+      z-index: 1;
+    }
+
+    .country-controls {
+      margin-top: 12px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .country-controls select {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 6px 10px;
+      background: #fff;
+      min-width: 220px;
+      font-size: 13px;
+    }
+
+    .footnote {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    @media (max-width: 768px) {
+      .title { font-size: 23px; }
+      .chart { height: 300px; }
+      .kpi-value { font-size: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1 class="title">美国农业部月报：全球核心农产品供需状态专题</h1>
+      <p class="subtitle" id="dataMeta"></p>
+    </div>
+
+    <div class="toolbar">
+      <div class="view-switch">
+        <button class="view-btn active" id="globalBtn" type="button">全球维度</button>
+        <button class="view-btn" id="countryBtn" type="button">核心国家维度</button>
+      </div>
+    </div>
+
+    <div class="commodity-grid" id="commodityGrid"></div>
+
+    <section class="view-panel" id="globalPanel">
+      <h2 class="section-title" id="globalTitle"></h2>
+      <p class="section-desc" id="globalDesc"></p>
+      <div class="kpi-grid" id="globalKpis"></div>
+      <div class="chart" id="globalChart"></div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>品种</th>
+              <th>市场年度</th>
+              <th>单位</th>
+              <th>状态</th>
+              <th>供给口径(产量)</th>
+              <th>使用量</th>
+              <th>缺口(供给-使用)</th>
+              <th>缺口比</th>
+            </tr>
+          </thead>
+          <tbody id="globalTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="view-panel" id="countryPanel" hidden>
+      <h2 class="section-title" id="countryTitle"></h2>
+      <p class="section-desc" id="countryDesc"></p>
+      <div class="country-controls">
+        <label for="countrySelect">核心国家：</label>
+        <select id="countrySelect"></select>
+      </div>
+      <div class="kpi-grid" id="countryKpis"></div>
+      <div class="chart" id="countryChart"></div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>国家</th>
+              <th>状态</th>
+              <th>产量</th>
+              <th>产量占比(核心国家)</th>
+              <th>供给口径(产量+进口-出口)</th>
+              <th>使用量</th>
+              <th>缺口</th>
+              <th>缺口比</th>
+            </tr>
+          </thead>
+          <tbody id="countryTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <p class="footnote">
+      口径说明：全球状态按“产量与使用量”判断；国家状态按“产量+进口-出口 与使用量”判断；棉花单位为“万包”，其余品种为“万吨”。
+      默认判定阈值采用缺口比（供给-使用）/使用量在 ±2% 以内为“供需平衡”；玉米和小麦全球使用量按校正口径覆盖。
+    </p>
+  </div>
+
+  <script>
+    (function () {
+      const data = window.usdaPsdTopicData;
+      const commodities = data.commodities || [];
+      if (!commodities.length) return;
+
+      const state = {
+        selectedCode: commodities[0].code,
+        selectedCountry: "",
+        activeView: "global"
+      };
+
+      const statusClass = {
+        surplus: "status-surplus",
+        balanced: "status-balanced",
+        deficit: "status-deficit",
+        unknown: "status-unknown"
+      };
+
+      const countryNameMap = {
+        "Argentina": "阿根廷",
+        "Australia": "澳大利亚",
+        "Benin": "贝宁",
+        "Bolivia": "玻利维亚",
+        "Brazil": "巴西",
+        "Canada": "加拿大",
+        "China": "中国",
+        "Egypt": "埃及",
+        "European Union": "欧盟",
+        "India": "印度",
+        "Mexico": "墨西哥",
+        "Pakistan": "巴基斯坦",
+        "Paraguay": "巴拉圭",
+        "Russia": "俄罗斯",
+        "South Africa": "南非",
+        "Thailand": "泰国",
+        "Turkey": "土耳其",
+        "Ukraine": "乌克兰",
+        "United States": "美国",
+        "Uzbekistan": "乌兹别克斯坦"
+      };
+
+      const globalChart = echarts.init(document.getElementById("globalChart"));
+      const countryChart = echarts.init(document.getElementById("countryChart"));
+
+      const numberFormatter = new Intl.NumberFormat("zh-CN", { maximumFractionDigits: 1 });
+      const percentFormatter = new Intl.NumberFormat("zh-CN", { maximumFractionDigits: 1 });
+      const globalUseOverrides = {
+        "0440000": { use: 1301290, statusCode: "deficit", statusLabel: "供不应求" }, // 玉米：1301.29百万吨
+        "0410000": { use: 824060, statusCode: "surplus", statusLabel: "供过于求" }   // 小麦：824.06百万吨
+      };
+
+      function toDisplayUnit(value) {
+        if (value === null || value === undefined || Number.isNaN(value)) return null;
+        return value / 10;
+      }
+
+      function isCotton(commodity) {
+        return commodity && commodity.code === "2631000";
+      }
+
+      function unitText(commodity) {
+        return isCotton(commodity) ? "万包" : "万吨";
+      }
+
+      function fmtQty(value) {
+        if (value === null || value === undefined || Number.isNaN(value)) return "-";
+        return numberFormatter.format(toDisplayUnit(value));
+      }
+
+      function fmtPercent(value) {
+        if (value === null || value === undefined || Number.isNaN(value)) return "-";
+        return `${percentFormatter.format(value * 100)}%`;
+      }
+
+      function countryNameZh(value) {
+        return countryNameMap[value] || value;
+      }
+
+      function globalView(commodity) {
+        const base = commodity.global || {};
+        const override = globalUseOverrides[commodity.code];
+        if (!override) return base;
+
+        const supply = base.supply;
+        const use = override.use;
+        const gap = (supply === null || use === null) ? null : (supply - use);
+        const balanceRatio = (gap === null || !use) ? null : (gap / use);
+        return {
+          ...base,
+          use,
+          gap,
+          balanceRatio,
+          statusCode: override.statusCode,
+          statusLabel: override.statusLabel
+        };
+      }
+
+      function getCommodity() {
+        return commodities.find(item => item.code === state.selectedCode) || commodities[0];
+      }
+
+      function pill(label, code) {
+        const cls = statusClass[code] || statusClass.unknown;
+        return `<span class="status-pill ${cls}">${label}</span>`;
+      }
+
+      function renderMeta() {
+        const time = new Date(data.generatedAt).toLocaleString("zh-CN", { hour12: false });
+        document.getElementById("dataMeta").textContent =
+          `数据源：美国农业部海外农业局生产供需数据库（月度） | 生成时间：${time} | 默认平衡阈值：缺口比在±2%内 | 单位：棉花为万包，其余为万吨（玉米/小麦全球使用量按校正口径覆盖）`;
+      }
+
+      function renderCommodityCards() {
+        const grid = document.getElementById("commodityGrid");
+        grid.innerHTML = commodities.map(item => {
+          const active = item.code === state.selectedCode ? "active" : "";
+          const g = globalView(item);
+          const ratio = g.balanceRatio;
+          const ratioText = ratio === null ? "缺口比：-" : `缺口比：${fmtPercent(ratio)}`;
+          return `
+            <article class="commodity-card ${active}" data-code="${item.code}">
+              <h3 class="commodity-name">${item.nameZh}</h3>
+              ${pill(g.statusLabel, g.statusCode)}
+              <div class="card-note">市场年度：${item.marketYearLabel}</div>
+              <div class="card-note">${ratioText}</div>
+            </article>
+          `;
+        }).join("");
+
+        grid.querySelectorAll(".commodity-card").forEach(card => {
+          card.addEventListener("click", () => {
+            state.selectedCode = card.dataset.code;
+            state.selectedCountry = "";
+            renderAll();
+          });
+        });
+      }
+
+      function renderGlobal() {
+        const commodity = getCommodity();
+        const global = globalView(commodity);
+        const unit = unitText(commodity);
+
+        document.getElementById("globalTitle").textContent = `${commodity.nameZh}：全球供需状态`;
+        const hasOverride = !!globalUseOverrides[commodity.code];
+        document.getElementById("globalDesc").textContent =
+          hasOverride
+            ? `当前评估年度 ${commodity.marketYearLabel}，状态判定为 ${global.statusLabel}（按你指定的全球总使用量口径修正）。`
+            : `当前评估年度 ${commodity.marketYearLabel}，状态判定为 ${global.statusLabel}。`;
+
+        document.getElementById("globalKpis").innerHTML = `
+          <div class="kpi"><div class="kpi-label">供给口径（产量，${unit}）</div><div class="kpi-value">${fmtQty(global.supply)}</div></div>
+          <div class="kpi"><div class="kpi-label">使用量（${unit}）</div><div class="kpi-value">${fmtQty(global.use)}</div></div>
+          <div class="kpi"><div class="kpi-label">缺口（${unit}）</div><div class="kpi-value">${fmtQty(global.gap)}</div></div>
+          <div class="kpi"><div class="kpi-label">缺口比</div><div class="kpi-value">${fmtPercent(global.balanceRatio)}</div></div>
+          <div class="kpi"><div class="kpi-label">期末库存（${unit}）</div><div class="kpi-value">${fmtQty(global.endingStocks)}</div></div>
+          <div class="kpi"><div class="kpi-label">判定</div><div class="kpi-value">${global.statusLabel}</div></div>
+        `;
+
+        document.getElementById("globalTableBody").innerHTML = commodities.map(item => {
+          const g = globalView(item);
+          return `
+            <tr>
+              <td>${item.nameZh}</td>
+              <td>${item.marketYearLabel}</td>
+              <td>${unitText(item)}</td>
+              <td>${pill(g.statusLabel, g.statusCode)}</td>
+              <td>${fmtQty(g.supply)}</td>
+              <td>${fmtQty(g.use)}</td>
+              <td>${fmtQty(g.gap)}</td>
+              <td>${fmtPercent(g.balanceRatio)}</td>
+            </tr>
+          `;
+        }).join("");
+
+        globalChart.setOption({
+          tooltip: { trigger: "axis" },
+          legend: { top: 8, data: ["供给口径(产量)", "使用量", "缺口比"] },
+          grid: { left: 58, right: 42, top: 56, bottom: 46 },
+          xAxis: {
+            type: "category",
+            data: commodities.map(item => item.nameZh),
+            axisLabel: { interval: 0 }
+          },
+          yAxis: [
+            { type: "value", name: "显示单位" },
+            { type: "value", name: "%", axisLabel: { formatter: "{value}%" } }
+          ],
+          series: [
+            {
+              name: "供给口径(产量)",
+              type: "bar",
+              data: commodities.map(item => toDisplayUnit(globalView(item).supply)),
+              itemStyle: {
+                color: params => commodities[params.dataIndex].code === commodity.code ? "#1f6f5f" : "#7db7a8"
+              }
+            },
+            {
+              name: "使用量",
+              type: "bar",
+              data: commodities.map(item => toDisplayUnit(globalView(item).use)),
+              itemStyle: { color: "#e3a27e" }
+            },
+            {
+              name: "缺口比",
+              type: "line",
+              yAxisIndex: 1,
+              smooth: true,
+              symbolSize: 7,
+              data: commodities.map(item => globalView(item).balanceRatio === null ? null : globalView(item).balanceRatio * 100),
+              itemStyle: { color: "#34495e" }
+            }
+          ]
+        });
+      }
+
+      function renderCountry() {
+        const commodity = getCommodity();
+        const rows = commodity.topCountries || [];
+        if (!rows.length) return;
+
+        const select = document.getElementById("countrySelect");
+        select.innerHTML = rows.map(row => `<option value="${row.country}">${countryNameZh(row.country)}</option>`).join("");
+        if (!state.selectedCountry || !rows.some(row => row.country === state.selectedCountry)) {
+          state.selectedCountry = rows[0].country;
+        }
+        select.value = state.selectedCountry;
+
+        const selected = rows.find(row => row.country === state.selectedCountry) || rows[0];
+        const unit = unitText(commodity);
+
+        document.getElementById("countryTitle").textContent = `${commodity.nameZh}：核心国家供需评估`;
+        document.getElementById("countryDesc").textContent =
+          `市场年度 ${commodity.marketYearLabel}，按产量排序取核心国家（前10）进行国家维度评估，当前单位：${unit}。`;
+
+        document.getElementById("countryKpis").innerHTML = `
+          <div class="kpi"><div class="kpi-label">国家</div><div class="kpi-value">${countryNameZh(selected.country)}</div></div>
+          <div class="kpi"><div class="kpi-label">状态</div><div class="kpi-value">${selected.statusLabel}</div></div>
+          <div class="kpi"><div class="kpi-label">产量（${unit}）</div><div class="kpi-value">${fmtQty(selected.production)}</div></div>
+          <div class="kpi"><div class="kpi-label">产量占比(核心国家)</div><div class="kpi-value">${fmtPercent(selected.productionShare)}</div></div>
+          <div class="kpi"><div class="kpi-label">供给口径（${unit}）</div><div class="kpi-value">${fmtQty(selected.supply)}</div></div>
+          <div class="kpi"><div class="kpi-label">使用量（${unit}）</div><div class="kpi-value">${fmtQty(selected.use)}</div></div>
+        `;
+
+        document.getElementById("countryTableBody").innerHTML = rows.map(row => `
+          <tr>
+            <td>${countryNameZh(row.country)}</td>
+            <td>${pill(row.statusLabel, row.statusCode)}</td>
+            <td>${fmtQty(row.production)}</td>
+            <td>${fmtPercent(row.productionShare)}</td>
+            <td>${fmtQty(row.supply)}</td>
+            <td>${fmtQty(row.use)}</td>
+            <td>${fmtQty(row.gap)}</td>
+            <td>${fmtPercent(row.balanceRatio)}</td>
+          </tr>
+        `).join("");
+
+        countryChart.setOption({
+          tooltip: { trigger: "axis" },
+          legend: { top: 8, data: ["缺口比", "产量占比"] },
+          grid: { left: 58, right: 42, top: 56, bottom: 46 },
+          xAxis: {
+            type: "category",
+            data: rows.map(item => countryNameZh(item.country)),
+            axisLabel: { rotate: 30 }
+          },
+          yAxis: [
+            { type: "value", name: "缺口比(%)" },
+            { type: "value", name: "产量占比(%)" }
+          ],
+          series: [
+            {
+              name: "缺口比",
+              type: "bar",
+              data: rows.map(row => row.balanceRatio === null ? null : row.balanceRatio * 100),
+              itemStyle: {
+                color: params => {
+                  const row = rows[params.dataIndex];
+                  if (row.statusCode === "surplus") return "#1f8f58";
+                  if (row.statusCode === "deficit") return "#cb3c2d";
+                  if (row.statusCode === "balanced") return "#c58a00";
+                  return "#7e8792";
+                }
+              }
+            },
+            {
+              name: "产量占比",
+              type: "line",
+              yAxisIndex: 1,
+              smooth: true,
+              symbolSize: 7,
+              data: rows.map(row => row.productionShare * 100),
+              itemStyle: { color: "#2f556e" }
+            }
+          ]
+        });
+
+        select.onchange = () => {
+          state.selectedCountry = select.value;
+          renderCountry();
+        };
+      }
+
+      function switchView(view) {
+        state.activeView = view;
+        document.getElementById("globalPanel").hidden = view !== "global";
+        document.getElementById("countryPanel").hidden = view !== "country";
+        document.getElementById("globalBtn").classList.toggle("active", view === "global");
+        document.getElementById("countryBtn").classList.toggle("active", view === "country");
+        setTimeout(() => {
+          globalChart.resize();
+          countryChart.resize();
+        }, 0);
+      }
+
+      function renderAll() {
+        renderCommodityCards();
+        renderGlobal();
+        renderCountry();
+        switchView(state.activeView);
+      }
+
+      window.addEventListener("resize", () => {
+        globalChart.resize();
+        countryChart.resize();
+      });
+
+      document.getElementById("globalBtn").addEventListener("click", () => switchView("global"));
+      document.getElementById("countryBtn").addEventListener("click", () => switchView("country"));
+
+      renderMeta();
+      renderAll();
+    })();
+  </script>
+</body>
+</html>
